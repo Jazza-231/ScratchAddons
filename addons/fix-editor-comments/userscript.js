@@ -68,8 +68,12 @@ export default async function ({ addon, console }) {
 
   while (true) {
     const editorComment = await addon.tab.waitForElement(".scratchCommentTextarea", { markAsSeen: true });
-    editorComment.addEventListener("onScroll", (e) => {
-      console.log(e.target);
+    document.addEventListener("onScroll", (e) => {
+      if (e.target.matches(editorComment)) {
+        console.log(e.target);
+        e.stopPropagation();
+        e.preventDefault();
+      }
     });
   }
 }
