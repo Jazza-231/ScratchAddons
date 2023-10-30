@@ -71,7 +71,6 @@ export default async function ({ addon, console }) {
     document.addEventListener("onScroll", (e) => {
       if (e.target.matches(editorComment)) {
         console.log(e.target);
-        e.stopPropagation();
         e.preventDefault();
       }
     });
