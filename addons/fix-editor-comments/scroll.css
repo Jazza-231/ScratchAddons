@@ -4,5 +4,4 @@
 .scratchCommentTextarea {
   overflow-y: auto;
   background-color: transparent;
-  pointer-events: none;
 }

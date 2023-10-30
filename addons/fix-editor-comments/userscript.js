@@ -65,4 +65,11 @@ export default async function ({ addon, console }) {
     }
     return originalCommentDrag.call(this, e, currentDragDeltaXY);
   };*/
+
+  while (true) {
+    const editorComment = await addon.tab.waitForElement(".scratchCommentTextarea", { markAsSeen: true });
+    editorComment.addEventListener("onScroll", (e) => {
+      console.log(e.target);
+    });
+  }
 }
