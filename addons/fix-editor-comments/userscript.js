@@ -68,7 +68,8 @@ export default async function ({ addon, console }) {
 
   while (true) {
     const editorComment = await addon.tab.waitForElement(".scratchCommentTextarea", { markAsSeen: true });
-    document.addEventListener("onScroll", (e) => {
+    console.log(editorComment);
+    document.addEventListener("wheel", (e) => {
       if (e.target.matches(editorComment)) {
         console.log(e.target);
         e.preventDefault();
