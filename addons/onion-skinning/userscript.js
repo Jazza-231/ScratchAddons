@@ -567,6 +567,7 @@ export default async function ({ addon, console, msg }) {
     el.className = "sa-onion-image";
     el.draggable = false;
     el.src = addon.self.dir + "/" + name + ".svg";
+    el.style.pointerEvents = "none";
     return el;
   };
 
@@ -585,7 +586,8 @@ export default async function ({ addon, console, msg }) {
   settingButton.appendChild(createButtonImage("settings"));
 
   document.body.addEventListener("click", (e) => {
-    if (areSettingsOpen() && !e.target.matches(".sa-onion-group *")) setSettingsOpen(false);
+    if (areSettingsOpen() && !(e.target.matches(".sa-onion-group *") && !e.target.matches("[title*=Toggle]")))
+      setSettingsOpen(false);
   });
 
   //

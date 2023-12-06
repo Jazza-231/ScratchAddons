@@ -25,6 +25,7 @@ export function initUI({ addon, msg }) {
     el.className = "sa-paint-snap-image";
     el.draggable = false;
     el.src = addon.self.dir + "/icons/" + name + ".svg";
+    el.style.pointerEvents = "none";
     return el;
   };
 
@@ -78,7 +79,8 @@ export function initUI({ addon, msg }) {
   controlsGroup.appendChild(settingButton);
 
   document.body.addEventListener("click", (e) => {
-    if (areSettingsOpen() && !e.target.matches(".sa-paint-snap-group *")) setSettingsOpen(false);
+    if (areSettingsOpen() && !(e.target.matches(".sa-paint-snap-group *") && !e.target.matches("[title*=Toggle]")))
+      setSettingsOpen(false);
   });
 
   const settingsOpenUpdaters = [];
