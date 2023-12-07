@@ -1,0 +1,7 @@
+{
+  "name": "Paper playing",
+  "descriptions": "Paper playground for jazza",
+  "versionAdded": "1.35.0",
+  "tags": ["recommended", "editor"],
+  "userscripts": [{ "url": "userscript.js", "matches": ["projects"] }]
+}
