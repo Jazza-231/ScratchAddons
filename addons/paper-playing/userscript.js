@@ -1,4 +1,18 @@
 export default async function ({ addon, console }) {
+  /*
+TODO (maybe):
+
+Smooth button
+- Affects selected paths
+Rounded corners on rectangles
+x, y, width, height of costume items
+Polygons
+Costume editor arrow key modifiers
+Blending modes for shapes
+Look into shiftable anchor point
+
+*/
+
   const paper = await addon.tab.traps.getPaper();
   console.log(paper);
 
