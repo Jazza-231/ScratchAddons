@@ -29,14 +29,19 @@ x, y, width, height
 
 Polygons
 1. New tool, select the number of points like the brush size
-2. Click and drag to set the size of the polygon
+2. Click and drag to set the size of the polygon...
+   How do I do that?
+
+Costume editor arrow key modifiers
+1. Steal addon.json code from editor number arrow keys
+2. Prevent default behaviour, update image and bounds
 */
 
 export default async function ({ addon, console }) {
   const paper = await addon.tab.traps.getPaper();
   console.log(paper);
 
-  function selectionBounds() {
+  function drawBounds() {
     paper.tools[0].boundingBoxTool.setSelectionBounds();
   }
 
@@ -66,7 +71,7 @@ export default async function ({ addon, console }) {
             let group = new paper.Group(selected);
 
             group.position = new paper.Point(480, 360);
-            selectionBounds();
+            drawBounds();
 
             group.remove(); // Remove the group so that it doesn't interfere with the layers
             group.removeChildren().forEach((item) => {
