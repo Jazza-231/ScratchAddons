@@ -3,5 +3,9 @@
   "descriptions": "Paper playground for jazza",
   "versionAdded": "1.35.0",
   "tags": ["recommended", "editor"],
+  "credits": [{
+    "name": "Jazza",
+    "link": "https://scratch.mit.edu/users/greeny--231"
+  }],
   "userscripts": [{ "url": "userscript.js", "matches": ["projects"] }]
 }
