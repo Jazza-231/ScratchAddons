@@ -12,6 +12,7 @@ Look into shiftable anchor point
 NOTES:
 Center on hotkey
 1. Fix things being grouped together no longer being grouped
+2. Check if layers are preserved?
 
 Smooth button
 1. Find out what the strings after the _ mean and how to make them
