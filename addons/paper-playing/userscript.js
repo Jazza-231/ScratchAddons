@@ -1,6 +1,6 @@
 /*
 TODO (maybe):
-[Center on hotkey]
+Center on hotkey
 Smooth button
 Rounded corners on rectangles
 x, y, width, height of costume items
@@ -10,6 +10,9 @@ Blending modes for shapes?
 Look into shiftable anchor point
 
 NOTES:
+Center on hotkey
+1. Fix things being grouped together no longer being grouped
+
 Smooth button
 1. Find out what the strings after the _ mean and how to make them
 2. Where will these new things go? All the "tools" require mouse input
