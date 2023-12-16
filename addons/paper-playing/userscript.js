@@ -112,14 +112,10 @@ export default async function ({ addon, console }) {
 
   function arrowKeys() {
     const acceptedKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
-    // A number for how many pixels to move by, boolean for zoom independance
-    // E.g. if you hold ctrl + shift while pressing an arrow key, it will move 15 real pixels, regardless of zoom
-    // Will be in the addon.json not here
     const settings = {
       default: 1,
       shift: 15,
       alt: 0.1,
-      ctrl: true,
     };
 
     function undoDefault(e) {
@@ -128,8 +124,6 @@ export default async function ({ addon, console }) {
       let amount;
       if (e.shiftKey) {
         amount = 15;
-      } else if (e.altKey) {
-        amount = 1;
       } else amount = 1;
       amount /= zoom();
 
@@ -145,23 +139,13 @@ export default async function ({ addon, console }) {
     }
 
     function addonMove(e) {
-      let zoomModifier = () => {
-        if (e.ctrlKey || e.metaKey) {
-          if (settings.ctrl) return 1;
-          else return zoom();
-        } else {
-          if (settings.ctrl) return zoom();
-          else return 1;
-        }
-      };
-
       let amount;
       if (e.shiftKey) {
         amount = settings.shift;
       } else if (e.altKey) {
         amount = settings.alt;
       } else amount = settings.default;
-      amount /= zoomModifier();
+      amount /= zoom();
 
       selectedItems().forEach((item) => {
         if (e.key === "ArrowLeft") {
@@ -175,7 +159,7 @@ export default async function ({ addon, console }) {
     }
 
     document.body.addEventListener("keydown", (e) => {
-      if (paperExists() && selectedItems()) {
+      if (paperExists() && selectedItems().length > 0) {
         if (acceptedKeys.includes(e.key)) {
           undoDefault(e);
           addonMove(e);
