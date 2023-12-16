@@ -131,7 +131,7 @@ export default async function ({ addon, console }) {
       } else if (e.altKey) {
         amount = 1;
       } else amount = 1;
-      amount /= zoom;
+      amount /= zoom();
 
       selectedItems().forEach((item) => {
         if (e.key === "ArrowLeft") {
@@ -148,9 +148,9 @@ export default async function ({ addon, console }) {
       let zoomModifier = () => {
         if (e.ctrlKey || e.metaKey) {
           if (settings.ctrl) return 1;
-          else return zoom;
+          else return zoom();
         } else {
-          if (settings.ctrl) return zoom;
+          if (settings.ctrl) return zoom();
           else return 1;
         }
       };
