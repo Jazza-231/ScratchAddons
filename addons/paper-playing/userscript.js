@@ -41,25 +41,20 @@ Costume editor arrow key modifiers
 */
 
 export default async function ({ addon, console }) {
+  window.addon = addon;
+
   const paper = await addon.tab.traps.getPaper();
-  console.log(paper);
 
   function drawBounds() {
-    if (toolCanSelect()) {
-      paper.tool.boundingBoxTool.setSelectionBounds();
-    }
+    if (toolCanSelect()) paper.tool.boundingBoxTool.setSelectionBounds();
   }
 
   function updateImage() {
-    if (toolCanSelect()) {
-      paper.tool.onUpdateImage();
-    }
+    if (toolCanSelect()) paper.tool.onUpdateImage();
   }
 
   const selectedItems = () => {
-    if (toolCanSelect()) {
-      return paper.project.selectedItems;
-    }
+    if (toolCanSelect()) return paper.project.selectedItems;
   };
 
   const toolCanSelect = () => {
@@ -122,39 +117,30 @@ export default async function ({ addon, console }) {
       if (e.ctrlKey || e.metaKey) return;
 
       let amount;
-      if (e.shiftKey) {
-        amount = 15;
-      } else amount = 1;
+      if (e.shiftKey) amount = 15;
+      else amount = 1;
       amount /= zoom();
 
       selectedItems().forEach((item) => {
-        if (e.key === "ArrowLeft") {
-          item.position.x += amount;
-        } else if (e.key === "ArrowRight") {
-          item.position.x -= amount;
-        } else if (e.key === "ArrowUp") {
-          item.position.y += amount;
-        } else item.position.y -= amount;
+        if (e.key === "ArrowLeft") item.position.x += amount;
+        else if (e.key === "ArrowRight") item.position.x -= amount;
+        else if (e.key === "ArrowUp") item.position.y += amount;
+        else item.position.y -= amount;
       });
     }
 
     function addonMove(e) {
       let amount;
-      if (e.shiftKey) {
-        amount = settings.shift;
-      } else if (e.altKey) {
-        amount = settings.alt;
-      } else amount = settings.default;
+      if (e.shiftKey) amount = settings.shift;
+      else if (e.altKey) amount = settings.alt;
+      else amount = settings.default;
       amount /= zoom();
 
       selectedItems().forEach((item) => {
-        if (e.key === "ArrowLeft") {
-          item.position.x -= amount;
-        } else if (e.key === "ArrowRight") {
-          item.position.x += amount;
-        } else if (e.key === "ArrowUp") {
-          item.position.y -= amount;
-        } else item.position.y += amount;
+        if (e.key === "ArrowLeft") item.position.x -= amount;
+        else if (e.key === "ArrowRight") item.position.x += amount;
+        else if (e.key === "ArrowUp") item.position.y -= amount;
+        else item.position.y += amount;
       });
     }
 
@@ -170,6 +156,42 @@ export default async function ({ addon, console }) {
     });
   }
 
+  async function smoothButton() {
+    const container = await addon.tab.waitForElement("[class*=paint-editor_editor-container-top_]");
+    const row2 = container.lastChild;
+    const toolsGroup = row2.lastChild.firstChild;
+
+    const outerDiv = document.createElement("div");
+    outerDiv.classList.add(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
+    outerDiv.classList.add(addon.tab.scratchClass("mode-tools_mod-labeled-icon-height"));
+    outerDiv.classList.add(addon.tab.scratchClass("input-group_input-group"));
+    outerDiv.style.cursor = "pointer";
+
+    const outerSpan = document.createElement("span");
+    outerSpan.classList.add(addon.tab.scratchClass("button_button"));
+    outerSpan.classList.add(addon.tab.scratchClass("labeled-icon-button_mod-edit-field"));
+
+    const img = document.createElement("img");
+    img.classList.add(addon.tab.scratchClass("labeled-icon-button_edit-field-icon"));
+    img.src = `${addon.self.dir}\\smooth.svg`;
+
+    const innerSpan = document.createElement("span");
+    innerSpan.classList.add(addon.tab.scratchClass("labeled-icon-button_edit-field-title"));
+    innerSpan.textContent = "Smooth";
+
+    outerDiv.appendChild(outerSpan);
+    outerSpan.appendChild(img);
+    outerSpan.appendChild(innerSpan);
+    toolsGroup.appendChild(outerDiv);
+
+    outerDiv.addEventListener("click", () => {
+      selectedItems().forEach((item) => {
+        item.simplify();
+      });
+    });
+  }
+
   centerOnKey();
   arrowKeys();
+  smoothButton();
 }
