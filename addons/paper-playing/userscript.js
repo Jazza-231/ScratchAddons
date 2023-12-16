@@ -15,12 +15,11 @@ Center on hotkey
 2. Check if layers are preserved?
 
 Smooth button
-1. Find out what the strings after the _ mean and how to make them
-2. Where will these new things go? All the "tools" require mouse input
+1. Where will these new things go? All the "tools" require mouse input
    And none of these require mouse input, there are more akin to the
    outline width, etc
-3. Make sure to check the item type of the selected items, only smooth paths, not text etc
-4. Setting for smoothing amount?
+2. Make sure to check the item type of the selected items, only smooth paths, not text etc
+3. Setting for smoothing type
 
 Rounded corners on rectangles
 1. UI from inkscape I think would be best
@@ -46,47 +45,147 @@ export default async function ({ addon, console }) {
   console.log(paper);
 
   function drawBounds() {
-    paper.tools[0].boundingBoxTool.setSelectionBounds();
+    if (toolCanSelect()) {
+      paper.tool.boundingBoxTool.setSelectionBounds();
+    }
   }
 
   function updateImage() {
-    paper.tool.onUpdateImage();
+    if (toolCanSelect()) {
+      paper.tool.onUpdateImage();
+    }
   }
 
-  function selectedItems() {
-    return paper.project.selectedItems;
-  }
+  const selectedItems = () => {
+    if (toolCanSelect()) {
+      return paper.project.selectedItems;
+    }
+  };
 
-  async function centerOnKey() {
+  const toolCanSelect = () => {
+    return paper.tool.onUpdateImage ? true : false;
+  };
+
+  const paperExists = () => {
+    return paper.view ? true : false;
+  };
+
+  const zoom = () => {
+    return paper.view.zoom;
+  };
+
+  // Random: If you undo an action, the entire project gets selected
+  // You can check if it is by looking at the last array item and seeing if it has a parent or if its null
+
+  function centerOnKey() {
     document.addEventListener("keydown", (e) => {
-      if (e.ctrlKey || e.metaKey) {
-        if (e.key === "e") {
-          // Prevent browser search opening
-          e.preventDefault();
+      if (paperExists()) {
+        if (e.ctrlKey || e.metaKey) {
+          if (e.key === "e") {
+            const selected = selectedItems();
+            if (selected.length > 0) {
+              // Prevent browser search opening
+              e.preventDefault();
 
-          const selected = selectedItems();
-          if (selected) {
-            let index = 0;
-            selected.forEach((item) => {
-              // Find the highest index of all the selected items
-              if (item.index > index) index = item.index;
-            });
+              let index = 0;
+              selected.forEach((item) => {
+                // Find the highest index of all the selected items
+                if (item.index > index) index = item.index;
+              });
 
-            let group = new paper.Group(selected);
+              let group = new paper.Group(selected);
 
-            group.position = new paper.Point(480, 360);
-            drawBounds();
+              group.position = new paper.Point(480, 360);
+              drawBounds();
 
-            group.remove(); // Remove the group so that it doesn't interfere with the layers
-            group.removeChildren().forEach((item) => {
-              paper.project.activeLayer.insertChild(index, item);
-            });
-            updateImage();
+              group.remove(); // Remove the group so that it doesn't interfere with the layers
+              group.removeChildren().forEach((item) => {
+                paper.project.activeLayer.insertChild(index, item);
+              });
+              updateImage();
+            }
           }
         }
       }
     });
   }
 
+  function arrowKeys() {
+    const acceptedKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
+    // A number for how many pixels to move by, boolean for zoom independance
+    // E.g. if you hold ctrl + shift while pressing an arrow key, it will move 15 real pixels, regardless of zoom
+    // Will be in the addon.json not here
+    const settings = {
+      default: 1,
+      shift: 15,
+      alt: 0.1,
+      ctrl: true,
+    };
+
+    function undoDefault(e) {
+      if (e.ctrlKey || e.metaKey) return;
+
+      let amount;
+      if (e.shiftKey) {
+        amount = 15;
+      } else if (e.altKey) {
+        amount = 1;
+      } else amount = 1;
+      amount /= zoom;
+
+      selectedItems().forEach((item) => {
+        if (e.key === "ArrowLeft") {
+          item.position.x += amount;
+        } else if (e.key === "ArrowRight") {
+          item.position.x -= amount;
+        } else if (e.key === "ArrowUp") {
+          item.position.y += amount;
+        } else item.position.y -= amount;
+      });
+    }
+
+    function addonMove(e) {
+      let zoomModifier = () => {
+        if (e.ctrlKey || e.metaKey) {
+          if (settings.ctrl) return 1;
+          else return zoom;
+        } else {
+          if (settings.ctrl) return zoom;
+          else return 1;
+        }
+      };
+
+      let amount;
+      if (e.shiftKey) {
+        amount = settings.shift;
+      } else if (e.altKey) {
+        amount = settings.alt;
+      } else amount = settings.default;
+      amount /= zoomModifier();
+
+      selectedItems().forEach((item) => {
+        if (e.key === "ArrowLeft") {
+          item.position.x -= amount;
+        } else if (e.key === "ArrowRight") {
+          item.position.x += amount;
+        } else if (e.key === "ArrowUp") {
+          item.position.y -= amount;
+        } else item.position.y += amount;
+      });
+    }
+
+    document.body.addEventListener("keydown", (e) => {
+      if (paperExists() && selectedItems()) {
+        if (acceptedKeys.includes(e.key)) {
+          undoDefault(e);
+          addonMove(e);
+          updateImage();
+          drawBounds();
+        }
+      }
+    });
+  }
+
   centerOnKey();
+  arrowKeys();
 }
