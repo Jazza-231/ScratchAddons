@@ -157,6 +157,8 @@ export default async function ({ addon, console }) {
   }
 
   async function smoothButton() {
+    const type = "simplify";
+
     const container = await addon.tab.waitForElement("[class*=paint-editor_editor-container-top_]");
     const row2 = container.lastChild;
     const toolsGroup = row2.lastChild.firstChild;
@@ -184,7 +186,8 @@ export default async function ({ addon, console }) {
 
     outerDiv.addEventListener("click", () => {
       selectedItems().forEach((item) => {
-        item.simplify();
+        if (type === "simplify") item.simplify();
+        else item.smooth();
       });
       updateImage();
       drawBounds();
