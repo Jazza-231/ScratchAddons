@@ -35,7 +35,7 @@
   <g
      transform="matrix(1.2996237,0,0,1.1038851,-266.51422,-91.516445)"
      id="g3"
-     style="stroke:#ccb3ff;stroke-opacity:1">
+     style="stroke:#855cd6;stroke-opacity:1">
     <g
        data-paper-data="{&quot;isPaintingLayer&quot;:true}"
        fill="none"
@@ -47,16 +47,16 @@
        stroke-miterlimit="10"
        stroke-dasharray="none"
        stroke-dashoffset="0"
-       style="mix-blend-mode:normal;stroke:#ccb3ff;stroke-opacity:1"
+       style="mix-blend-mode:normal;stroke:#855cd6;stroke-opacity:1"
        id="g2">
       <path
          d="m 206.0703,91.24533 4.46035,-6.56242 4.46034,6.56242 4.46035,-6.56242"
          id="path1"
-         style="stroke:#ccb3ff;stroke-opacity:1" />
+         style="stroke:#855cd6;stroke-opacity:1" />
       <path
          d="m 206.0703,99.29518 c 1.48678,-2.18747 2.35772,-6.56242 4.46035,-6.56242 2.10262,0 2.35772,6.56242 4.46034,6.56242 2.10262,0 2.97357,-4.37494 4.46035,-6.56242"
          id="path2"
-         style="stroke:#ccb3ff;stroke-opacity:1" />
+         style="stroke:#855cd6;stroke-opacity:1" />
     </g>
   </g>
 </svg>

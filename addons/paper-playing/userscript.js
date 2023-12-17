@@ -162,7 +162,6 @@ export default async function ({ addon, console }) {
     const toolsGroup = row2.lastChild.firstChild;
 
     const outerDiv = document.createElement("div");
-    outerDiv.classList.add(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
     outerDiv.classList.add(addon.tab.scratchClass("mode-tools_mod-labeled-icon-height"));
     outerDiv.classList.add(addon.tab.scratchClass("input-group_input-group"));
     outerDiv.style.cursor = "pointer";
@@ -179,7 +178,6 @@ export default async function ({ addon, console }) {
     innerSpan.classList.add(addon.tab.scratchClass("labeled-icon-button_edit-field-title"));
     innerSpan.textContent = "Smooth";
 
-    outerDiv.appendChild(outerSpan);
     outerSpan.appendChild(img);
     outerSpan.appendChild(innerSpan);
     toolsGroup.appendChild(outerDiv);
@@ -188,7 +186,26 @@ export default async function ({ addon, console }) {
       selectedItems().forEach((item) => {
         item.simplify();
       });
+      updateImage();
+      drawBounds();
     });
+
+    addon.tab.redux.initialize();
+    outerDiv.appendChild(outerSpan);
+    toolsGroup.childNodes[2].classList.add(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
+
+    function getTool(action) {
+      if (action.target.state.scratchPaint.mode === "SELECT") {
+        if (outerDiv.lastChild !== outerSpan) {
+          outerDiv.appendChild(outerSpan);
+        }
+      } else {
+        if (outerDiv.lastChild === outerSpan) {
+          outerDiv.removeChild(outerSpan);
+        }
+      }
+    }
+    addon.tab.redux.addEventListener("statechanged", getTool);
   }
 
   centerOnKey();
