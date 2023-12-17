@@ -133,6 +133,7 @@ export default async function ({ addon, console }) {
       let amount;
       if (e.shiftKey) amount = settings.shift;
       else if (e.altKey) amount = settings.alt;
+      else if (e.ctrlKey) amount = 0;
       else amount = settings.default;
       amount /= zoom();
 
