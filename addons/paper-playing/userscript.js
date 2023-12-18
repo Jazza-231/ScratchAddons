@@ -71,21 +71,32 @@ export default async function ({ addon, console }) {
 
   // Random: If you undo an action, the entire project gets selected
   // You can check if it is by looking at the last array item and seeing if it has a parent or if its null
+  // Find a way to deselect the last item if it is a project and select the items again because they were just deslected
 
   function centerOnKey() {
+    // This should remove the project (item with no parent) from the selected items array
+    // This wont actually deselect the project tho
+    function deselectProject(items) {
+      if (items[items.length - 1].parent === null) {
+        items.pop();
+      }
+      return items;
+    }
+
     document.addEventListener("keydown", (e) => {
       if (paperExists()) {
         if (e.ctrlKey || e.metaKey) {
           if (e.key === "e") {
-            const selected = selectedItems();
+            console.log(paper.project.selectedItems);
+            const selected = deselectProject(selectedItems());
+            console.log(selected);
             if (selected.length > 0) {
               // Prevent browser search opening
               e.preventDefault();
 
-              let index = 0;
+              let index = Infinity;
               selected.forEach((item) => {
-                // Find the highest index of all the selected items
-                if (item.index > index) index = item.index;
+                if (item.index < index) index = item.index;
               });
 
               let group = new paper.Group(selected);
@@ -94,9 +105,12 @@ export default async function ({ addon, console }) {
               drawBounds();
 
               group.remove(); // Remove the group so that it doesn't interfere with the layers
-              group.removeChildren().forEach((item) => {
-                paper.project.activeLayer.insertChild(index, item);
-              });
+              group
+                .removeChildren()
+                .reverse()
+                .forEach((item) => {
+                  paper.project.activeLayer.insertChild(index, item);
+                });
               updateImage();
             }
           }
@@ -183,7 +197,7 @@ export default async function ({ addon, console }) {
 
     outerSpan.appendChild(img);
     outerSpan.appendChild(innerSpan);
-    toolsGroup.appendChild(outerDiv);
+    outerDiv.appendChild(outerSpan);
 
     outerDiv.addEventListener("click", () => {
       selectedItems().forEach((item) => {
@@ -194,21 +208,25 @@ export default async function ({ addon, console }) {
       drawBounds();
     });
 
-    addon.tab.redux.initialize();
-    outerDiv.appendChild(outerSpan);
-    toolsGroup.childNodes[2].classList.add(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
+    function updateTools() {
+      toolsGroup.appendChild(outerDiv);
+      toolsGroup.childNodes[2].classList.add(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
+    }
 
-    function getTool(action) {
-      if (action.target.state.scratchPaint.mode === "SELECT") {
-        if (outerDiv.lastChild !== outerSpan) {
-          outerDiv.appendChild(outerSpan);
+    updateTools();
+
+    function getTool(e) {
+      if (e.target.state.scratchPaint.mode === "SELECT") {
+        if (toolsGroup.lastChild !== outerDiv) {
+          updateTools();
         }
       } else {
-        if (outerDiv.lastChild === outerSpan) {
-          outerDiv.removeChild(outerSpan);
+        if (toolsGroup.lastChild === outerDiv) {
+          toolsGroup.removeChild(outerDiv);
         }
       }
     }
+    addon.tab.redux.initialize();
     addon.tab.redux.addEventListener("statechanged", getTool);
   }
 
