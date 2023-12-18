@@ -210,6 +210,7 @@ export default async function ({ addon, console }) {
 
     function updateTools() {
       toolsGroup.appendChild(outerDiv);
+      outerDiv.classList.remove(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
       toolsGroup.childNodes[2].classList.add(addon.tab.scratchClass("mode-tools_mod-dashed-border"));
     }
 
@@ -217,9 +218,11 @@ export default async function ({ addon, console }) {
 
     function getTool(e) {
       if (e.target.state.scratchPaint.mode === "SELECT") {
-        if (toolsGroup.lastChild !== outerDiv) {
-          updateTools();
-        }
+        setTimeout(() => {
+          if (toolsGroup.lastChild !== outerDiv) {
+            updateTools();
+          }
+        }, 100);
       } else {
         if (toolsGroup.lastChild === outerDiv) {
           toolsGroup.removeChild(outerDiv);
