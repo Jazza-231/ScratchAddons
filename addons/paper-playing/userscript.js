@@ -7,7 +7,8 @@ x, y, width, height of costume items
 Polygons
 Costume editor arrow key modifiers
 Blending modes for shapes?
-Look into shiftable anchor point
+Shiftable anchor point
+Copy selection into new costume
 
 NOTES:
 Center on hotkey
@@ -38,6 +39,39 @@ Polygons
 Costume editor arrow key modifiers
 1. Steal addon.json code from editor number arrow keys
 2. Prevent default behaviour, update image and bounds
+
+Shiftable anchor point
+1. Override paper.tool.boundingBoxTool._modeMap.ROTATE.onMouseDrag
+2. Make guide points to show where it will rotate around
+3. Where will I store the pivot data? Pivot, data, and basically every property is wiped...comment? Local storage?
+
+Copy selection to new costume
+1. How to make new blank costumes properly?
+2. How do I convert to bitmap properly?
+3. Do I need to center it manually?
+4. Alternatively, I could manually make a new asset with the required data, add it, update the workspace, 
+   and never have to deal with paper or have to switch costumes, allowing you to stay on the costume you're on right now
+
+Below is example code to copy bitmap to bitmap
+const sel = paper.project.selectedItems[0]
+const json = paper.Base.importJSON(sel)
+const newCostume = {
+    name: "name",
+    md5: 'cd21514d0531fdffb22204e0ec5ed84a.svg',
+    rotationCenterX: 0,
+    rotationCenterY: 0,
+    bitmapResolution: 1,
+    skinId: null
+}
+vm.editingTarget.addCostume(newCostume)
+vm.editingTarget.setCostume(vm.editingTarget.currentCostume + 1)
+vm.emitTargetsUpdate()
+
+(click convert to bitmap)
+
+paper.project.getActiveLayer().addChild(json)
+paper.project.activeLayer.children[0].selected = true
+paper.tool.onUpdateImage()
 */
 
 export default async function ({ addon, console }) {
