@@ -250,7 +250,7 @@ export default async function ({ addon, console }) {
 
     updateTools();
 
-    function getTool(e) {
+    function checkTools(e) {
       if (e.target.state.scratchPaint.mode === "SELECT") {
         setTimeout(() => {
           if (toolsGroup.lastChild !== outerDiv) {
@@ -264,7 +264,7 @@ export default async function ({ addon, console }) {
       }
     }
     addon.tab.redux.initialize();
-    addon.tab.redux.addEventListener("statechanged", getTool);
+    addon.tab.redux.addEventListener("statechanged", checkTools);
   }
 
   centerOnKey();
