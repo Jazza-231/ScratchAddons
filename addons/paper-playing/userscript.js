@@ -42,8 +42,10 @@ Costume editor arrow key modifiers
 
 Shiftable anchor point
 1. Override paper.tool.boundingBoxTool._modeMap.ROTATE.onMouseDrag
+   See line 309 of updateSelectTool.js
 2. Make guide points to show where it will rotate around
 3. Where will I store the pivot data? Pivot, data, and basically every property is wiped...comment? Local storage?
+   Comments could take up project.json space, local storage will not persist on other devices
 
 Copy selection to new costume
 1. How to make new blank costumes properly?
