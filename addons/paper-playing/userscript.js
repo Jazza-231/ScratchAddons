@@ -46,12 +46,13 @@ Shiftable anchor point
 2. Make guide points to show where it will rotate around
 3. Where will I store the pivot data? Pivot, data, and basically every property is wiped...comment? Local storage?
    Comments could take up project.json space, local storage will not persist on other devices
+4. How does scratch get the bounds of the selection? Do they make a group with the clones?
 
 Copy selection to new costume
 1. How to make new blank costumes properly?
 2. How do I convert to bitmap properly?
 3. Do I need to center it manually?
-4. Alternatively, I could manually make a new asset with the required data, add it, update the workspace, 
+4. Alternatively, I could make a new asset with the required data, add it, update the workspace, 
    and never have to deal with paper or have to switch costumes, allowing you to stay on the costume you're on right now
 
 Below is example code to copy bitmap to bitmap
@@ -107,7 +108,6 @@ export default async function ({ addon, console }) {
 
   // Random: If you undo an action, the entire project gets selected
   // You can check if it is by looking at the last array item and seeing if it has a parent or if its null
-  // Find a way to deselect the last item if it is a project and select the items again because they were just deslected
 
   function centerOnKey() {
     // This should remove the project (item with no parent) from the selected items array
@@ -125,6 +125,7 @@ export default async function ({ addon, console }) {
           if (e.key === "e") {
             console.log(paper.project.selectedItems);
             const selected = deselectProject(selectedItems());
+            // Traverse project.activeLayer for selected items to add support for groups OR check selected items for groups and items with parents that are groups
             console.log(selected);
             if (selected.length > 0) {
               // Prevent browser search opening
