@@ -48,6 +48,23 @@ Shiftable anchor point
    Comments could take up project.json space, local storage will not persist on other devices
 4. How does scratch get the bounds of the selection? Do they make a group with the clones?
 
+paper.tool.boundingBoxTool._modeMap.ROTATE.onMouseDown = ((event) => {
+        let selectionBounds = paper.project.selectedItems[0]
+    paper.project.selectedItems.forEach((item) => {
+        selectionBounds = selectionBounds.unite(item.clone(false))
+        selectionBounds.remove()
+    })
+    let bounds = selectionBounds.bounds
+    let pivot = bounds.center
+    this.pivot = pivot.add(50)
+})
+
+paper.tool.boundingBoxTool._modeMap.ROTATE.onMouseDrag = ((event) => {
+    paper.project.selectedItems.forEach((item) => {
+        item.rotate(1, pivot)
+    })
+})
+
 Copy selection to new costume
 1. How to make new blank costumes properly?
 2. How do I convert to bitmap properly?
@@ -106,25 +123,22 @@ export default async function ({ addon, console }) {
     return paper.view.zoom;
   };
 
-  // Random: If you undo an action, the entire project gets selected
-  // You can check if it is by looking at the last array item and seeing if it has a parent or if its null
+  // This should remove the activeLayer (item with no parent) from the selected items array
+  // This wont actually deselect it tho. The activeLayer gets added to selectedItems on undo
+  function deselectActiveLayer(items) {
+    if (items[items.length - 1].parent === null) {
+      items.pop();
+    }
+    return items;
+  }
 
   function centerOnKey() {
-    // This should remove the project (item with no parent) from the selected items array
-    // This wont actually deselect the project tho
-    function deselectProject(items) {
-      if (items[items.length - 1].parent === null) {
-        items.pop();
-      }
-      return items;
-    }
-
     document.addEventListener("keydown", (e) => {
       if (paperExists()) {
         if (e.ctrlKey || e.metaKey) {
           if (e.key === "e") {
             console.log(paper.project.selectedItems);
-            const selected = deselectProject(selectedItems());
+            const selected = deselectActiveLayer(selectedItems());
             // Traverse project.activeLayer for selected items to add support for groups OR check selected items for groups and items with parents that are groups
             console.log(selected);
             if (selected.length > 0) {
@@ -270,7 +284,38 @@ export default async function ({ addon, console }) {
     addon.tab.redux.addEventListener("statechanged", checkTools);
   }
 
+  function shiftableAnchorPoint() {
+    /**
+     * Selection must be a single item or a group
+     * When you have something selected, a custom pivot point will show, and when you drag it,
+     * that is the point on the canvas which it rotates around (you can not rotate relative to the
+     * item, because its center changes on rotation).
+     * When you move the item/group, the pivot point is moved too, so that it's not rotating on the same canvas point, but
+     * acts like it is relative to the item.
+     * Make sure to keep all original scratch features (shift to snap to 45 degrees), and think about compat with new addon idea
+     * customising the value that it snaps to when you hold shift.
+     */
+    const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
+
+    rotateTool.constructor.prototype.onMouseDown = function () {
+      let selectionBounds = paper.project.selectedItems[0];
+      deselectActiveLayer(selectedItems()).forEach((item) => {
+        selectionBounds = selectionBounds.unite(item.clone(false));
+        selectionBounds.remove();
+      });
+      let bounds = selectionBounds.bounds;
+      this.pivot = bounds.center;
+    };
+
+    rotateTool.constructor.prototype.onMouseDrag = function () {
+      paper.project.selectedItems.forEach((item) => {
+        item.rotate(1, this.pivot.add(50));
+      });
+    };
+  }
+
   centerOnKey();
   arrowKeys();
   smoothButton();
+  shiftableAnchorPoint();
 }
