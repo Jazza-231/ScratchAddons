@@ -303,9 +303,7 @@ export default async function ({ addon, console }) {
       let selectionBounds = selected[0].bounds;
       selected.forEach((item) => {
         selectionBounds = selectionBounds.unite(item.clone(false).bounds);
-        // selectionBounds.remove();
       });
-      // let bounds = selectionBounds.bounds;
       let bounds = selectionBounds;
       this.pivot = bounds.center;
     };
