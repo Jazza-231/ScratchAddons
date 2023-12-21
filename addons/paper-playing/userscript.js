@@ -300,9 +300,9 @@ export default async function ({ addon, console }) {
 
     rotateTool.constructor.prototype.onMouseDown = function () {
       let selected = deselectActiveLayer(selectedItems());
-      let selectionBounds = selected[0];
+      let selectionBounds = selected[0].bounds;
       selected.forEach((item) => {
-        selectionBounds = selectionBounds.unite(item.clone(false));
+        selectionBounds = selectionBounds.unite(item.clone(false).bounds);
         selectionBounds.remove();
       });
       let bounds = selectionBounds.bounds;
