@@ -298,8 +298,9 @@ export default async function ({ addon, console }) {
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
     rotateTool.constructor.prototype.onMouseDown = function () {
-      let selectionBounds = paper.project.selectedItems[0];
-      deselectActiveLayer(selectedItems()).forEach((item) => {
+      let selected = deselectActiveLayer(selectedItems());
+      let selectionBounds = selected[0];
+      selected.forEach((item) => {
         selectionBounds = selectionBounds.unite(item.clone(false));
         selectionBounds.remove();
       });
