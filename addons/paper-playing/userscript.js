@@ -6,9 +6,10 @@ Rounded corners on rectangles
 x, y, width, height of costume items
 Polygons
 Costume editor arrow key modifiers
-Blending modes for shapes?
+Blending modes for shapes? (not compat)
 Shiftable anchor point
 Copy selection into new costume
+Glow effect (not compat)
 
 NOTES:
 Center on hotkey
