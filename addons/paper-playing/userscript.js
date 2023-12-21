@@ -294,6 +294,7 @@ export default async function ({ addon, console }) {
      * acts like it is relative to the item.
      * Make sure to keep all original scratch features (shift to snap to 45 degrees), and think about compat with new addon idea
      * customising the value that it snaps to when you hold shift.
+     * Add an option to lock it the canvas - hexagonal
      */
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
