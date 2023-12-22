@@ -97,7 +97,6 @@ paper.tool.onUpdateImage()
 
 export default async function ({ addon, console }) {
   window.addon = addon;
-
   const paper = await addon.tab.traps.getPaper();
 
   function drawBounds() {
@@ -297,22 +296,25 @@ export default async function ({ addon, console }) {
      * customising the value that it snaps to when you hold shift.
      * Add an option to lock it the canvas - hexagonal
      */
+
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
-    rotateTool.constructor.prototype.onMouseDown = function () {
-      let selected = deselectActiveLayer(selectedItems());
-      let selectionBounds = selected[0].bounds;
-      selected.forEach((item) => {
-        selectionBounds = selectionBounds.unite(item.clone(false).bounds);
-      });
-      let bounds = selectionBounds;
-      this.pivot = bounds.center;
-    };
+    rotateTool.constructor.prototype.onMouseDrag = function (e) {
+      if (!this.rotGroupPivot.changed) {
+        this.rotGroupPivot = this.rotGroupPivot.add(50);
+        this.rotGroupPivot.changed = true;
+      }
 
-    rotateTool.constructor.prototype.onMouseDrag = function () {
-      paper.project.selectedItems.forEach((item) => {
-        item.rotate(1, this.pivot.add(50));
+      let rotAngle = e.point.subtract(this.rotGroupPivot).angle;
+      if (e.modifiers.shift) {
+        rotAngle = Math.round(rotAngle / 45) * 45;
+      }
+
+      this.rotItems.forEach((item) => {
+        item.rotate(rotAngle - this.prevRot, this.rotGroupPivot);
       });
+
+      this.prevRot = rotAngle;
     };
   }
 
