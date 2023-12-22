@@ -300,9 +300,15 @@ export default async function ({ addon, console }) {
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
     rotateTool.constructor.prototype.onMouseDrag = function (e) {
+      // Find a way to stop the rotation from jumping when you first start dragging
+      // Will involve finding an angle to adjust the rotAngle by
+
+      // rotGroupPivot gets set to null on mouse up, thus the changed property is falsy
+      // Do it this way so that we don't have to worry about changing the onMouseDown function
       if (!this.rotGroupPivot.changed) {
         this.realPivot = this.rotGroupPivot;
         this.rotGroupPivot.x += 50;
+        this.rotGroupPivot.y += 50;
         this.rotGroupPivot.changed = true;
       }
 
