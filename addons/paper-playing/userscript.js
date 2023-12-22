@@ -301,11 +301,18 @@ export default async function ({ addon, console }) {
 
     rotateTool.constructor.prototype.onMouseDrag = function (e) {
       if (!this.rotGroupPivot.changed) {
-        this.rotGroupPivot = this.rotGroupPivot.add(50);
+        this.realPivot = this.rotGroupPivot;
+        this.rotGroupPivot.x += 50;
         this.rotGroupPivot.changed = true;
+
+        // let v1 = this.realPivot.subtract(e.point);
+        // let v2 = this.rotGroupPivot.subtract(e.point);
+        // let radians = Math.acos(v1.dot(v2) / (v1.length * v2.length));
+        // this.angle = radians * (180 / Math.PI);
+        // this.plusOrMinus = this.rotGroupPivot.x - e.point.x < 0 ? -1 : 1;
       }
 
-      let rotAngle = e.point.subtract(this.rotGroupPivot).angle;
+      let rotAngle = e.point.subtract(this.rotGroupPivot).angle; // - this.plusOrMinus * this.angle;
       if (e.modifiers.shift) {
         rotAngle = Math.round(rotAngle / 45) * 45;
       }
