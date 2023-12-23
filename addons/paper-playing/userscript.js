@@ -305,10 +305,10 @@ export default async function ({ addon, console }) {
     // In order to do .clone() etc on the pivots, after reading, use new paper.Point([x, y])
     const shiftableAnchorPointData = [
       {
-        id: 10, // Id of the item or group
-        absPivot: [480, 360], // If locked is true, the pivot point is not relative to the item, use this value
-        relPivot: [50, 50], // If locked is false, the pivot point is relative to the center of the item/group
-        locked: true,
+        id: 10,
+        pivot: [480, 360],
+        locked: true, // If locked is false, absPivot is changed when dragged
+        // (IMPORTANT: you cant do anything relative to the object, you just have to pretend it is)
       },
     ];
 
