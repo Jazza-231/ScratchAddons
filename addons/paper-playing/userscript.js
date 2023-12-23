@@ -306,13 +306,19 @@ export default async function ({ addon, console }) {
       // rotGroupPivot gets set to null on mouse up, thus the changed property is falsy
       // Do it this way so that we don't have to worry about changing the onMouseDown function
       if (!this.rotGroupPivot.changed) {
-        this.realPivot = this.rotGroupPivot;
-        this.rotGroupPivot.x += 50;
-        this.rotGroupPivot.y += 50;
+        this.realPivot = this.rotGroupPivot.clone();
+        this.rotGroupPivot.x += 100;
+        this.rotGroupPivot.y += 0;
         this.rotGroupPivot.changed = true;
+
+        let v1 = e.point.subtract(this.rotGroupPivot);
+        let v2 = e.point.subtract(this.realPivot);
+        let angle = Math.acos(v1.dot(v2) / (v1.length * v2.length)) * (180 / Math.PI);
+        angle *= e.point.x < this.rotGroupPivot.x ? -1 : 1;
+        this.modifierAngle = angle;
       }
 
-      let rotAngle = e.point.subtract(this.rotGroupPivot).angle;
+      let rotAngle = e.point.subtract(this.rotGroupPivot).angle + this.modifierAngle;
       if (e.modifiers.shift) {
         rotAngle = Math.round(rotAngle / 45) * 45;
       }
