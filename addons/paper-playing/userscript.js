@@ -294,20 +294,32 @@ export default async function ({ addon, console }) {
      * acts like it is relative to the item.
      * Make sure to keep all original scratch features (shift to snap to 45 degrees), and think about compat with new addon idea
      * customising the value that it snaps to when you hold shift.
-     * Add an option to lock it the canvas - hexagonal
+     * Add an option to lock it the canvas no matter where you move the object - hexagonal
+     * Pivot point, when dragged, snaps to the center of the object
      */
+
+    // updateSelectTool.js line 114 is the selection anchor, this is made draggable and displays new pivot point
+    // Snapping addon snaps from pivot point, not center.
+
+    // Local storage structure (don't forget localStorage only allows strings, use JSON.stringify)
+    // In order to do .clone() etc on the pivots, after reading, use new paper.Point([x, y])
+    const shiftableAnchorPointData = [
+      {
+        id: 10, // Id of the item or group
+        absPivot: [480, 360], // If locked is true, the pivot point is not relative to the item, use this value
+        relPivot: [50, 50], // If locked is false, the pivot point is relative to the center of the item/group
+        locked: true,
+      },
+    ];
 
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
     rotateTool.constructor.prototype.onMouseDrag = function (e) {
-      // Find a way to stop the rotation from jumping when you first start dragging
-      // Will involve finding an angle to adjust the rotAngle by
-
       // rotGroupPivot gets set to null on mouse up, thus the changed property is falsy
       // Do it this way so that we don't have to worry about changing the onMouseDown function
       if (!this.rotGroupPivot.changed) {
         this.realPivot = this.rotGroupPivot.clone();
-        this.rotGroupPivot.x += 100;
+        this.rotGroupPivot.x += 50;
         this.rotGroupPivot.y += 0;
         this.rotGroupPivot.changed = true;
 
