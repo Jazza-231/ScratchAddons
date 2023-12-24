@@ -302,10 +302,9 @@ export default async function ({ addon, console }) {
       },
     ];
 
-    const lib = loadModules(paper);
     const {
       layer: { getLayer },
-    } = lib;
+    } = loadModules(paper);
 
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
