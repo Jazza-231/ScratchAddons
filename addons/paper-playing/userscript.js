@@ -49,23 +49,6 @@ Shiftable anchor point
    Comments could take up project.json space, local storage will not persist on other devices
 4. How does scratch get the bounds of the selection? Do they make a group with the clones?
 
-paper.tool.boundingBoxTool._modeMap.ROTATE.onMouseDown = ((event) => {
-        let selectionBounds = paper.project.selectedItems[0]
-    paper.project.selectedItems.forEach((item) => {
-        selectionBounds = selectionBounds.unite(item.clone(false))
-        selectionBounds.remove()
-    })
-    let bounds = selectionBounds.bounds
-    let pivot = bounds.center
-    this.pivot = pivot.add(50)
-})
-
-paper.tool.boundingBoxTool._modeMap.ROTATE.onMouseDrag = ((event) => {
-    paper.project.selectedItems.forEach((item) => {
-        item.rotate(1, pivot)
-    })
-})
-
 Copy selection to new costume
 1. How to make new blank costumes properly?
 2. How do I convert to bitmap properly?
@@ -94,6 +77,8 @@ paper.project.getActiveLayer().addChild(json)
 paper.project.activeLayer.children[0].selected = true
 paper.tool.onUpdateImage()
 */
+
+import { loadModules } from "../paint-snap/helpers.js";
 
 export default async function ({ addon, console }) {
   window.addon = addon;
@@ -298,19 +283,29 @@ export default async function ({ addon, console }) {
      * Pivot point, when dragged, snaps to the center of the object
      */
 
-    // updateSelectTool.js line 114 is the selection anchor, this is made draggable and displays new pivot point
+    // updateSelectTool.js line 114 is the selection anchor, this should be made draggable and displays new pivot point
     // Snapping addon snaps from pivot point, not center.
 
     // Local storage structure (don't forget localStorage only allows strings, use JSON.stringify)
     // In order to do .clone() etc on the pivots, after reading, use new paper.Point([x, y])
-    const shiftableAnchorPointData = [
+    const data = [
       {
-        id: 10,
-        pivot: [480, 360],
-        locked: true, // If locked is false, absPivot is changed when dragged
+        spriteId: "|f}2;)JrF-0wS)ZPxtgL",
+        costumeId: "592bae6f8bb9c8d88401b54ac431f7b6",
+        itemId: 10,
+        pivot: {
+          x: 530,
+          y: 310,
+        },
+        locked: true, // If locked is false, pivot is changed when dragged
         // (IMPORTANT: you cant do anything relative to the object, you just have to pretend it is)
       },
     ];
+
+    const lib = loadModules(paper);
+    const {
+      layer: { getLayer },
+    } = lib;
 
     const rotateTool = paper.tool.boundingBoxTool._modeMap.ROTATE;
 
@@ -319,8 +314,8 @@ export default async function ({ addon, console }) {
       // Do it this way so that we don't have to worry about changing the onMouseDown function
       if (!this.rotGroupPivot.changed) {
         this.realPivot = this.rotGroupPivot.clone();
-        this.rotGroupPivot.x += 50;
-        this.rotGroupPivot.y += 0;
+        this.rotGroupPivot.x = data[0].pivot.x;
+        this.rotGroupPivot.y = data[0].pivot.y;
         this.rotGroupPivot.changed = true;
 
         let v1 = e.point.subtract(this.rotGroupPivot);
@@ -340,6 +335,11 @@ export default async function ({ addon, console }) {
       });
 
       this.prevRot = rotAngle;
+    };
+
+    const oldSetSelectionBounds = paper.tool.boundingBoxTool.setSelectionBounds;
+    paper.tool.boundingBoxTool.setSelectionBounds = function () {
+      oldSetSelectionBounds.call(this);
     };
   }
 
