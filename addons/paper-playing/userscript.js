@@ -340,6 +340,8 @@ export default async function ({ addon, console }) {
     const oldSetSelectionBounds = paper.tool.boundingBoxTool.setSelectionBounds;
     paper.tool.boundingBoxTool.setSelectionBounds = function () {
       oldSetSelectionBounds.call(this);
+
+      this.boundsPath.selectionAnchor.position = new paper.Point(data[0].pivot);
     };
   }
 
