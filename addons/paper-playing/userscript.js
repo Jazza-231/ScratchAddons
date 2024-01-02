@@ -80,9 +80,10 @@ paper.tool.onUpdateImage()
 
 import { loadModules } from "../paint-snap/helpers.js";
 
-export default async function ({ addon, console }) {
+export default async function ({ addon, console, msg }) {
   window.addon = addon;
   const paper = await addon.tab.traps.getPaper();
+  const vm = await addon.tab.traps.vm;
 
   function drawBounds() {
     if (toolCanSelect()) paper.tool.boundingBoxTool.setSelectionBounds();
@@ -237,8 +238,10 @@ export default async function ({ addon, console }) {
 
     outerDiv.addEventListener("click", () => {
       selectedItems().forEach((item) => {
-        if (type === "simplify") item.simplify();
-        else item.smooth();
+        if (item.smooth) {
+          if (type === "simplify") item.simplify();
+          else item.smooth();
+        }
       });
       updateImage();
       drawBounds();
@@ -344,8 +347,46 @@ export default async function ({ addon, console }) {
     };
   }
 
+  function deleteOthers() {
+    const types = ["sound", "costume"];
+    const deletedCostumes = [];
+    let deleted;
+    function getRestoreCostumeFun(costumes, id) {
+      costumes.forEach((costume) => {
+        vm.addCostume(costume.md5, costume, id, "");
+      });
+    }
+
+    addon.tab.createEditorContextMenu(
+      (ctx) => {
+        const target = vm.editingTarget;
+        const deleteBefore = ctx.index;
+        for (let i = 0; i < deleteBefore; i++) {
+          deleted = vm.editingTarget.deleteCostume(0);
+          if (deleted) deletedCostumes.push(deleted);
+        }
+        while (true) {
+          deleted = target.deleteCostume(target.getCostumes().length - 1);
+          if (deleted) deletedCostumes.push(deleted);
+          else break;
+        }
+        addon.tab.redux.dispatch({
+          type: "scratch-gui/restore-deletion/RESTORE_UPDATE",
+          state: { restoreFun: getRestoreCostumeFun(deletedCostumes, vm.editingTarget.id), deletedItem: "Costume" },
+        });
+      },
+      {
+        types,
+        position: "assetContextMenuAfterDelete",
+        order: 1,
+        label: msg("deleteOthers"),
+      }
+    );
+  }
+
   centerOnKey();
   arrowKeys();
   smoothButton();
   shiftableAnchorPoint();
+  deleteOthers();
 }
