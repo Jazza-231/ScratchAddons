@@ -391,7 +391,8 @@ export default async function ({ addon, console, msg }) {
             if (deleted) deletedItems.push(deleted);
           }
           while (true) {
-            deleted = target.deleteSound(target.getSounds().length - 1);
+            if (target.getSounds().length > 1) deleted = target.deleteSound(target.getSounds().length - 1);
+            else break;
             if (deleted) deletedItems.push(deleted);
             else break;
           }
