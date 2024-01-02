@@ -349,20 +349,23 @@ export default async function ({ addon, console, msg }) {
 
   function deleteOthers() {
     const types = ["sound", "costume"];
-    const deletedCostumes = [];
+    let deletedCostumes = [];
     let deleted;
-    function getRestoreCostumeFun(costumes, id) {
-      costumes.forEach((costume) => {
-        vm.addCostume(costume.md5, costume, id, "");
+    let target;
+
+    function getRestoreCostumeFun() {
+      deletedCostumes.forEach((costume) => {
+        vm.addCostume(costume.md5, costume, target.id, "");
       });
+      deletedCostumes = [];
     }
 
     addon.tab.createEditorContextMenu(
       (ctx) => {
-        const target = vm.editingTarget;
+        target = vm.editingTarget;
         const deleteBefore = ctx.index;
         for (let i = 0; i < deleteBefore; i++) {
-          deleted = vm.editingTarget.deleteCostume(0);
+          deleted = target.deleteCostume(0);
           if (deleted) deletedCostumes.push(deleted);
         }
         while (true) {
@@ -372,7 +375,7 @@ export default async function ({ addon, console, msg }) {
         }
         addon.tab.redux.dispatch({
           type: "scratch-gui/restore-deletion/RESTORE_UPDATE",
-          state: { restoreFun: getRestoreCostumeFun(deletedCostumes, vm.editingTarget.id), deletedItem: "Costume" },
+          state: { restoreFun: getRestoreCostumeFun, deletedItem: "Costume" },
         });
       },
       {
