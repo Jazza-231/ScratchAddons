@@ -408,8 +408,17 @@ export default async function ({ addon, console, msg }) {
         position: "assetContextMenuAfterDelete",
         order: 1,
         label: msg("deleteOthers"),
+        condition: showDeleteOthers,
       }
     );
+
+    function showDeleteOthers(ctx) {
+      if (ctx.type === "costume") {
+        return vm.editingTarget.getCostumes().length > 1;
+      } else {
+        return vm.editingTarget.getSounds().length > 1;
+      }
+    }
   }
 
   centerOnKey();
