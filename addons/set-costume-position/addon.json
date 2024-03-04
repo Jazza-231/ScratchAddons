@@ -1,0 +1,8 @@
+{
+  "name": "Set costume element position",
+  "description": "Right click a costume element to set its x and y position.",
+  "tags": ["editor", "costumeEditor"],
+  "versionAdded": "1.37.0",
+  "credits": [{ "name": "Jazza", "link": "https://scratch.mit.edu/users/greeny--231" }],
+  "userscripts": [{ "matches": ["projects"], "url": "userscript.js" }]
+}
