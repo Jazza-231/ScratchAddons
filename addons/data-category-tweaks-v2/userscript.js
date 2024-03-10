@@ -9,6 +9,7 @@ export default async function ({ addon, console, msg, safeMsg }) {
   // Used in setting change handler. Updated in getBlocksXML.
   // (Yes this is weird but it's how it was originally and I'm too scared to change it)
   let hasSeparateListCategory = false;
+  let hasGetCounts = false;
 
   const separateVariablesByType = (toolboxXML) => {
     const listButtonIndex = toolboxXML.findIndex(
@@ -152,12 +153,17 @@ export default async function ({ addon, console, msg, safeMsg }) {
   vm.runtime.getBlocksXML = function (target) {
     const result = originalGetBlocksXML.call(this, target);
     hasSeparateListCategory = addon.settings.get("separateListCategory");
-    if (!addon.self.disabled && hasSeparateListCategory) {
+    hasGetCounts = addon.settings.get("showCounts");
+
+    if (!addon.self.disabled && (hasSeparateListCategory || hasGetCounts)) {
       result.push({
         id: "data",
-        xml: `
+        xml: hasSeparateListCategory
+          ? `
         <category
-          name="%{BKY_CATEGORY_VARIABLES}"
+          name="%{BKY_CATEGORY_VARIABLES} ${hasGetCounts ? "(" : ""}${
+              hasGetCounts ? vm.editingTarget.getAllVariableNamesInScopeByType().length : ""
+            }${hasGetCounts ? ")" : ""}"
           id="variables"
           colour="${ScratchBlocks.Colours.data.primary}"
           secondaryColour="${ScratchBlocks.Colours.data.tertiary}"
@@ -169,7 +175,17 @@ export default async function ({ addon, console, msg, safeMsg }) {
           colour="${ScratchBlocks.Colours.data_lists.primary}"
           secondaryColour="${ScratchBlocks.Colours.data_lists.tertiary}"
           custom="LIST">
-        </category>`,
+        </category>`
+          : `
+          <category
+            name="%{BKY_CATEGORY_VARIABLES} ${hasGetCounts ? "(" : ""}${
+              hasGetCounts ? vm.editingTarget.getAllVariableNamesInScopeByType().length : ""
+            }${hasGetCounts ? ")" : ""}"
+            id="variables"
+            colour="${ScratchBlocks.Colours.data.primary}"
+            secondaryColour="${ScratchBlocks.Colours.data.tertiary}"
+            custom="VARIABLE">
+          </category>`,
       });
       result.map = (callback) => {
         // Prevent Scratch from trying to change the color of the added category in high contrast mode.
@@ -189,11 +205,25 @@ export default async function ({ addon, console, msg, safeMsg }) {
     vm.emitWorkspaceUpdate();
   }
 
+  if (addon.settings.get("showCounts")) {
+    hasGetCounts = true;
+    addon.tab.redux.initialize();
+
+    addon.tab.redux.addEventListener("statechanged", (event) => {
+      if (event.detail.action.type === "scratch-gui/monitors/UPDATE_MONITORS") {
+        vm.refreshWorkspace();
+      }
+    });
+  }
+
   addon.settings.addEventListener("change", (e) => {
     // When the separate list category option changes, we need to do a workspace update.
     // For all other options, just refresh the toolbox.
     // Always doing both of these in response to a settings change causes many issues.
-    if (addon.settings.get("separateListCategory") !== hasSeparateListCategory) {
+    if (
+      addon.settings.get("separateListCategory") !== hasSeparateListCategory ||
+      addon.settings.get("showCounts") !== hasGetCounts
+    ) {
       if (vm.editingTarget) {
         vm.emitWorkspaceUpdate();
       }

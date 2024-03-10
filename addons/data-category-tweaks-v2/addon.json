@@ -4,6 +4,12 @@
   "credits": [
     {
       "name": "GarboMuffin"
+    },
+    {
+      "name": "Jazza",
+      "note": "Variable count",
+      "id": "variableCount",
+      "link": "https://scratch.mit.edu/users/greeny--231"
     }
   ],
   "dynamicEnable": true,
@@ -34,6 +40,12 @@
       "id": "moveReportersDown",
       "type": "boolean",
       "default": false
+    },
+    {
+      "name": "Show exact variable and list count",
+      "id": "showCounts",
+      "type": "boolean",
+      "default": true
     }
   ],
   "tags": ["editor", "codeEditor", "recommended"],
