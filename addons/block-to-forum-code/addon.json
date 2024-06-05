@@ -1,0 +1,10 @@
+{
+  "name": "Copy blocks as forum code",
+  "description": "Adds yet another right click menu item to allow you to copy a scratch block from the editor as the form code for it.",
+  "tags": ["editor", "codeEditor"],
+  "versionAdded": "1.38.2",
+  "userscripts": [{ "url": "userscript.js", "matches": ["projects"] }],
+  "dynamicEnable": true,
+  "dynamicDisable": true,
+  "credits": [{ "name": "Jazza", "link": "https://scratch.mit.edu/users/greeny--231" }, { "name": "just.a.hriday" }]
+}
