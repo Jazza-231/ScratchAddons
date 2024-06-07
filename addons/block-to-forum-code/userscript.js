@@ -1,4 +1,6 @@
 export default async function ({ addon, console, msg }) {
+// Remake this with an object you populate before even trying to make code
+
   const codes = {
     motion_movesteps: `move (%i) steps`,
     motion_turnright: `turn cw (%i) degrees`,
@@ -19,6 +21,13 @@ export default async function ({ addon, console, msg }) {
     end
     `,
     operator_equals: `<[%i] = [%i]>`,
+    control_if: `
+    if <%i> then
+
+    %i
+
+    end
+    `,
   };
 
   addon.tab.createBlockContextMenu(
@@ -45,25 +54,24 @@ export default async function ({ addon, console, msg }) {
     }
   }
 
-  function copyBlock(block, loop) {
+  function copyBlock(block) {
     console.log(block);
-    console.log(block.type);
-
     const type = block.type;
     let inputs = [];
 
-    for (let child of block.childBlocks_) {
-      if (child.childBlocks_.length > 0) {
-        inputs.push(copyBlock(child, true));
-      } else {
-        inputs.push(child.inputList[0].fieldRow[0].text_);
+    block.inputList.forEach((input) => {
+      if (input.type !== 5) {
+        console.log(input);
+        inputs.push(input.connection.targetConnection?.sourceBlock_);
       }
-    }
+    });
+
+    inputs = inputs.map((input) => (input === undefined ? "" : input));
+    console.log(inputs);
 
     let regex = /%\i/;
     let code;
     let length = inputs.length;
-    console.log(inputs);
 
     if (codes[type]) {
       code = codes[type];
@@ -72,7 +80,6 @@ export default async function ({ addon, console, msg }) {
         code = code.replace(regex, inputs[i]); // Replace %i with corresponding input
       }
     }
-    if (loop) return code;
 
     setClipboardText(`
     [scratchblocks]
