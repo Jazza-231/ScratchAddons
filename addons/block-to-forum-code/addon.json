@@ -2,7 +2,7 @@
   "name": "Copy blocks as forum code",
   "description": "Adds yet another right click menu item to allow you to copy a scratch block from the editor as the form code for it.",
   "tags": ["editor", "codeEditor"],
-  "versionAdded": "1.38.2",
+  "versionAdded": "1.39.0",
   "userscripts": [{ "url": "userscript.js", "matches": ["projects"] }],
   "dynamicEnable": true,
   "dynamicDisable": true,
