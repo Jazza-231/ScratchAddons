@@ -1,0 +1,22 @@
+{
+  "name": "WebP Support",
+  "description": "Adds support for WebP images to be uploaded. They will be converted to another format on upload.",
+  "tags": ["editor", "costumeEditor", "recommended"],
+  "versionAdded": "1.43.0",
+  "credits": [{ "name": "Jazza", "link": "https://github.com/Jazza-231" }],
+  "enabledByDefault": true,
+  "settings": [
+    {
+      "name": "Image format",
+      "id": "format",
+      "type": "select",
+      "potentialValues": [
+        { "id": "jpeg", "name": "JPEG" },
+        { "id": "png", "name": "PNG" }
+      ],
+      "default": "jpeg"
+    },
+    { "name": "Quality", "id": "quality", "type": "integer", "min": 0, "max": 100, "default": 70 }
+  ],
+  "userscripts": [{ "matches": ["projects"], "url": "userscript.js" }]
+}

@@ -25,7 +25,7 @@ export default async function ({ addon, console, msg }) {
     });
     button.append(img);
     const input = Object.assign(document.createElement("input"), {
-      accept: ".svg, .png, .bmp, .jpg, .jpeg, .sprite2, .sprite3",
+      accept: ".svg, .png, .bmp, .jpg, .jpeg, .webp, .sprite2, .sprite3",
       className: `${addon.tab.scratchClass(
         "action-menu_file-input" /* TODO: when adding dynamicDisable, ensure compat with drag-drop */
       )} sa-better-img-uploads-input`,
@@ -110,7 +110,7 @@ export default async function ({ addon, console, msg }) {
     let processed = new Array();
 
     for (let file of files) {
-      if (!/\.(png|jpe?g|bmp)$/i.test(file.name)) {
+      if (!/\.(png|jpe?g|bmp|webp)$/i.test(file.name)) {
         // The file is not processable, so we should ignore it, and let scratch deal with it..
         processed.push(file);
         continue;
