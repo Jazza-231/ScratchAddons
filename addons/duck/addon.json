@@ -1,0 +1,15 @@
+{
+  "name": "Duck project sounds",
+  "description": "Mutes or lowers the volume of project when audio is being played elsewhere.",
+  "tags": ["editor", "codeEditor", "beta"],
+  "versionAdded": "1.43.0",
+  "userscripts": [
+    {
+      "url": "userscript.js",
+      "matches": ["projects"]
+    }
+  ],
+  "credits": [{ "name": "Jazza", "link": "http://github.com/Jazza-231" }],
+  "relatedAddons": ["vol-slider", "mute-project"],
+  "settings": [{ "name": "Duck volume", "id": "volume", "type": "integer", "min": 0, "max": 100, "default": 10 }]
+}
